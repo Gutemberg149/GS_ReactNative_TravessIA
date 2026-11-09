@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "TravessIA",
+    "slug": "travessia",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/ativos/imagens/logo-travessia.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    }
+  }
+}
