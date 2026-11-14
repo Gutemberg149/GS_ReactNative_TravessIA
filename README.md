@@ -1,6 +1,15 @@
 # TravessIA Mobile - Aplicativo React Native (Expo + TypeScript)
 
 Aplicativo mobile desenvolvido em **React Native (Expo)** integrado ao backend de microsserviços Java (**GS_TravessIA**) para auxiliar pedestres **60+ e Pessoas com Deficiência (PCD)** na travessia segura de semáforos inteligentes.
+O sistema resolve o problema do tempo curto do semaforos de travessia de pedestres em cruzamentos urbanos. 
+A proposta é o usuario que deve ter mais 60 anos e/ou pcd ganhar mais tempo para atravessar a rua, sendo que em dias "secos" esse 
+tempo a mais é de 5 segundos e dias chuvosos é de 10 segundos.
+
+
+O app como estar em fase de teste vai ter as coordenadas do semaforos pre-fixadas, podendo escolher se estar perto ou longe de um dos semafors registrado. Sendo que so o Admin pode registrar ou deletar um semaforo.
+No IOs tem a opção de usar a geolocalização do seu computador.
+Na tela de login já tem um usuario e admin registrado, apaenas para facilitar e testar, só basta precionar um dos botões.
+
 
 ---
 
@@ -48,3 +57,23 @@ Aplicativo mobile desenvolvido em **React Native (Expo)** integrado ao backend d
    npm run ios
    ```
    *(Ou rode `npx expo start` e pressione a tecla **`i`** no terminal para abrir automaticamente o iOS Simulator).*
+
+## 3. Tem que rodar esses dois links para acordar o backend
+   1. https://travessia-traffic.onrender.com/
+   2. https://travessia-gateway.onrender.com/
+   
+
+## 🎥 Vídeo da Solução
+https://vimeo.com/1246888541?share=copy&fl=sv&fe=ci
+
+
+## 👥 Equipe de Desenvolvimento
+
+- 👤 **Gutemberg RM - 562267**
+- 👤 **Erik Naoki RM - 565771**
+- 👤 **Juliana RM - 561171**
+- 👤 **Gustavo RM - 561650**
+- 👤 **João RM - 564361**
+
+
+

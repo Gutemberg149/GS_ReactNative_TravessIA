@@ -1,16 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { AxiosError } from 'axios';
-import { Platform } from 'react-native';
 
 export const CHAVE_TOKEN_STORAGE = '@TravessIA:token';
 export const CHAVE_USUARIO_STORAGE = '@TravessIA:usuario';
 
-export const URL_BASE_API =
-  Platform.OS === 'android' ? 'http://10.0.2.2:8080/api' : 'http://localhost:8080/api';
+export const URL_BASE_API = 'https://travessia-gateway.onrender.com/api';
 
 export const clienteApi = axios.create({
   baseURL: URL_BASE_API,
-  timeout: 15000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -36,7 +34,7 @@ export function extrairMensagemErro(erro: unknown): string {
   if (axios.isAxiosError(erro)) {
     const erroAxios = erro as AxiosError<Record<string, unknown>>;
     if (!erroAxios.response) {
-      return 'Não foi possível conectar ao servidor Java (http://localhost:8080). Verifique se o Docker do GS_TravessIA está ativo.';
+      return 'Não foi possível conectar ao servidor (https://travessia-gateway.onrender.com). Verifique sua conexão ou aguarde o servidor no Render iniciar.';
     }
 
     const status = erroAxios.response.status;

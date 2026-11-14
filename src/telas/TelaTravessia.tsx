@@ -28,6 +28,8 @@ import {
   SolicitacaoTravessia,
 } from '../tipos/modelos';
 
+const TEMPO_BASE_SEMAFORO_SEGUNDOS = 15;
+
 export const TelaTravessia: React.FC = () => {
   const rota = useRoute<any>();
   const { usuarioLogado } = usarAutenticacao();
@@ -38,7 +40,6 @@ export const TelaTravessia: React.FC = () => {
   const [longitudeUsuario, setLongitudeUsuario] = useState<number>(-46.6602);
   const [dadosProximidade, setDadosProximidade] = useState<RespostaProximidade | null>(null);
   const [ultimaSolicitacao, setUltimaSolicitacao] = useState<SolicitacaoTravessia | null>(null);
-  const [segundosRestantes, setSegundosRestantes] = useState<number>(0);
 
   const [carregandoProximidade, setCarregandoProximidade] = useState<boolean>(false);
   const [enviandoSolicitacao, setEnviandoSolicitacao] = useState<boolean>(false);
@@ -95,14 +96,6 @@ export const TelaTravessia: React.FC = () => {
     }
   }, [semaforoSelecionado, latitudeUsuario, longitudeUsuario, checarProximidadeNaApi]);
 
-  useEffect(() => {
-    if (segundosRestantes <= 0) return;
-    const temporizador = setInterval(() => {
-      setSegundosRestantes((valorAtual) => (valorAtual > 0 ? valorAtual - 1 : 0));
-    }, 1000);
-    return () => clearInterval(temporizador);
-  }, [segundosRestantes]);
-
   function simularPosicaoPerto() {
     if (!semaforoSelecionado) return;
     setUltimaSolicitacao(null);
@@ -157,12 +150,12 @@ export const TelaTravessia: React.FC = () => {
       setUltimaSolicitacao(resposta);
       const segundosCalculados =
         resposta.segundosExtras ?? resposta.tempoAdicionalCalculado ?? 5;
+      const tempoTotalAberto = TEMPO_BASE_SEMAFORO_SEGUNDOS + segundosCalculados;
       const climaAtual =
         resposta.condicaoClimatica ?? resposta.condicaoClima ?? 'Consultado';
 
-      setSegundosRestantes(segundosCalculados);
       setMensagemSucesso(
-        `Travessia autorizada! Clima: ${climaAtual} • A IA liberou +${segundosCalculados} segundos extras.`
+        `Travessia autorizada! Clima: ${climaAtual} • Quando o semáforo abrir, você terá ${tempoTotalAberto} segundos no total (${TEMPO_BASE_SEMAFORO_SEGUNDOS}s padrão + ${segundosCalculados}s extras).`
       );
     } catch (erro) {
       setMensagemErro(extrairMensagemErro(erro));
@@ -172,6 +165,10 @@ export const TelaTravessia: React.FC = () => {
   }
 
   const botaoLiberado = dadosProximidade?.botaoDesbloqueado === true;
+  const segundosExtrasUltimaSolicitacao =
+    ultimaSolicitacao?.segundosExtras ?? ultimaSolicitacao?.tempoAdicionalCalculado ?? 5;
+  const tempoTotalUltimaSolicitacao =
+    TEMPO_BASE_SEMAFORO_SEGUNDOS + segundosExtrasUltimaSolicitacao;
 
   return (
     <SafeAreaView style={estilosGlobais.areaSegura}>
@@ -281,19 +278,17 @@ export const TelaTravessia: React.FC = () => {
 
         {ultimaSolicitacao ? (
           <View style={[estilosGlobais.cartao, estilos.cartaoResultadoIa]}>
-            <Text style={estilos.tituloResultadoIa}>DECISÃO DA INTELIGÊNCIA ARTIFICIAL</Text>
-            <Text style={estilos.cronometroValor}>
-              +{ultimaSolicitacao.segundosExtras ?? ultimaSolicitacao.tempoAdicionalCalculado ?? 5}s
+            <Text style={estilos.tituloResultadoIa}>TEMPO TOTAL COM SEMÁFORO ABERTO</Text>
+            <Text style={estilos.cronometroValor}>{tempoTotalUltimaSolicitacao}s</Text>
+            <Text style={estilos.detalheClima}>
+              Quando o semáforo abrir, você terá {tempoTotalUltimaSolicitacao} segundos para
+              atravessar ({TEMPO_BASE_SEMAFORO_SEGUNDOS}s padrão + {segundosExtrasUltimaSolicitacao}
+              s extras).
             </Text>
             <Text style={estilos.detalheClima}>
               Clima em tempo real:{' '}
               {ultimaSolicitacao.condicaoClimatica ?? ultimaSolicitacao.condicaoClima}
             </Text>
-            {segundosRestantes > 0 ? (
-              <Text style={estilos.contagemRegressiva}>
-                Tempo extra em andamento: {segundosRestantes}s restantes...
-              </Text>
-            ) : null}
           </View>
         ) : null}
 
@@ -423,12 +418,8 @@ const estilos = StyleSheet.create({
     fontSize: fontes.tamanhos.corpo,
     fontWeight: '700',
     color: cores.textoPrincipal,
-  },
-  contagemRegressiva: {
-    marginTop: 6,
-    fontSize: fontes.tamanhos.pequeno,
-    fontWeight: '700',
-    color: cores.primaria,
+    textAlign: 'center',
+    marginTop: 4,
   },
   botaoGiganteTravessia: {
     backgroundColor: cores.secundaria,
